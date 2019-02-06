@@ -3,4 +3,4 @@ project(debug)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(lab1 main.cpp main.cpp matrix.cpp matrix.h unsupportedoperationexception.cpp unsupportedoperationexception.h intarray.cpp intarray.h)
+add_executable(lab1 main.cpp main.cpp matrix.cpp matrix.h unsupportedoperationexception.cpp unsupportedoperationexception.h intarray.cpp intarray.h utils.cpp utils.h)

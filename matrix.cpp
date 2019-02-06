@@ -5,6 +5,7 @@
 #include "matrix.h"
 #include "unsupportedoperationexception.h";
 
+
 Matrix::Matrix(double **array) : array(array) {}
 
 Matrix Matrix::operator-(Matrix next) {
@@ -80,4 +81,23 @@ double **allocateEmptyMatrixArray() {
         array[i] = (double *) malloc(3 * sizeof(double));
     }
     return array;
+}
+
+Matrix generateRandomMatrix() {
+    double **array = allocateEmptyMatrixArray();
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            array[i][j] = (std::rand() % 500) / (float) 10;
+        }
+    }
+    return Matrix(array);
+}
+
+void Matrix::printMatrix() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            std::cout << array[i][j] << ' ';
+        }
+        std::cout << '\n';
+    }
 }
