@@ -8,8 +8,10 @@
 
 using namespace std;
 
-void swapByLink(int &a, int &b) {
-    int temp = a;
+
+template <typename T>
+void swapByLink(T &a, T &b) {
+    T temp = a;
     a = b;
     b = temp;
 }
@@ -18,7 +20,7 @@ void swapByPointer(int *a, int *b) {
     swapByLink(*a, *b);
 }
 
-void roundByLink(double &value) {
+void round(double &value) {
     double fraction = value - ((int) value);
     value -= fraction;
     if (fraction > 0.49999999) {
@@ -26,37 +28,40 @@ void roundByLink(double &value) {
     }
 }
 
-void roundByPointer(double *value) {
-    roundByLink(*value);
+void round(double *value) {
+    round(*value);
 }
 
 
-void multiplyByLink(ComplexNumber &number, double factor) {
+void multiply(ComplexNumber &number, double factor) {
     number.x = number.x * factor;
     number.y = number.y * factor;
 }
 
-void multiplyByPointer(ComplexNumber *number, double factor) {
-    multiplyByLink(*number, factor);
+void multiply(ComplexNumber *number, double factor) {
+    multiply(*number, factor);
 }
 
-void transposeByLink(Matrix &source) {
+void transpose(Matrix &source) {
+    double **array = allocateEmptyMatrixArray();
     for (int i = 0; i < 3; i++) {
-        for (int j = i; j < 3; j++) {
-            swapByLink(source.matrixValues[i][j], source.matrixValues[j][i]);
+        for (int j = 0; j < 3; j++) {
+            array[j][i] = source.matrixValues[i][j];
         }
     }
+    free(source.matrixValues);
+    source.matrixValues = array;
 }
 
-void transposeByPointer(Matrix *source) {
-    transposeByLink(*source);
+void transpose(Matrix *source) {
+    transpose(*source);
 }
 
 Matrix::Matrix() {
 
 }
 
-Matrix::Matrix(int **matrixValues) {
+Matrix::Matrix(double **matrixValues) {
     this->matrixValues = matrixValues;
 }
 
@@ -67,6 +72,25 @@ void Matrix::printMatrix() {
         }
         cout << '\n';
     }
+}
+
+double **allocateEmptyMatrixArray() {
+    double **array;
+    array = (double **) malloc(3 * sizeof(double *));
+    for (int i = 0; i < 3; i++) {
+        array[i] = (double *) malloc(3 * sizeof(double));
+    }
+    return array;
+}
+
+Matrix generateRandomMatrix() {
+    double **array = allocateEmptyMatrixArray();
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            array[i][j] = (std::rand() % 500) / (float) 10;
+        }
+    }
+    return Matrix(array);
 }
 
 ComplexNumber::ComplexNumber(double x, double y) : x(x), y(y) {}

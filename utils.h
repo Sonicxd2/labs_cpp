@@ -8,10 +8,10 @@
 
 class Matrix {
 public:
-    int** matrixValues;
+    double** matrixValues;
 
     Matrix();
-    Matrix(int ** matrixValues);
+    Matrix(double ** matrixValues);
 
     void printMatrix();
 };
@@ -24,20 +24,26 @@ public:
     ComplexNumber(double x, double y);
 };
 
-void swapByLink(int &a, int &b);
+
+template <typename T>
+void swapByLink(T &a, T &b);
 
 void swapByPointer(int *a, int *b);
 
-void roundByLink(double &value);
+void round(double &value);
 
-void roundByPointer(double *value);
+void round(double *value);
 
-void multiplyByPointer(ComplexNumber *number, double factor);
+void multiply(ComplexNumber *number, double factor);
 
-void multiplyByLink(ComplexNumber &number, double factor);
+void multiply(ComplexNumber &number, double factor);
 
-void transposeByPointer(Matrix *source);
+void transpose(Matrix *source);
 
-void transposeByLink(Matrix &source);
+void transpose(Matrix &source);
+
+double **allocateEmptyMatrixArray();
+
+Matrix generateRandomMatrix();
 
 #endif //LABS_CPP_UTILS_H

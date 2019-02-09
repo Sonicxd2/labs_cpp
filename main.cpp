@@ -2,53 +2,76 @@
 // Created by yaroslav on 05.02.19.
 //
 #include <iostream>
+#include <functional>
+#include <signal.h>
 #include "utils.h"
+#include <memory>
+#include <ctime>
 
 using namespace std;
 
-void testRoundByLink(double a) {
-    roundByLink(a);
-    cout << a << endl;
+void assert(bool value) {
+    if (!value) {
+        throw std::exception();
+    }
 }
 
-void testRoundByPointer(double b) {
-    roundByPointer(&b);
-    cout << b << endl;
+bool swapTest() {
+    int a = 1;
+    int b = 2;
+    swapByLink(a, b);
+    assert(a > b);
+    swapByPointer(&a, &b);
+    return a < b;
 }
 
-void testMatrix(int **sampled) {
-    Matrix *matrix = new Matrix(sampled);
-    matrix->matrixValues = sampled;
-    matrix->printMatrix();
-    transposeByPointer(matrix);
-    matrix->printMatrix();
+bool roundTest() {
+    double val = 1.2;
+    round(val);
+    assert((int)val == 1);
+    val = 1.6;
+    round(val);
+    assert((int)val == 2);
+    return true;
 }
+
+bool complexMultiplyTest() {
+    ComplexNumber number = ComplexNumber(10, 0);
+    double value = 123;
+    multiply(number, value);
+    assert(number.x == 123 * 10);
+    number.y = 1;
+    multiply(&number, 2);
+    assert(number.y == 2);
+    return true;
+}
+
+bool transposeMatrix() {
+    Matrix current = generateRandomMatrix();
+    Matrix source = Matrix(current);
+    current.printMatrix();
+    transpose(current);
+    current.printMatrix();
+    return true;
+}
+
+std::function<bool()> tests[] = {swapTest, roundTest, complexMultiplyTest, transposeMatrix};
 
 int main() {
-    int a = 120;
-    int b = 34;
-    swapByLink(a, b);
-    cout << a << " " << b << '\n';
-    swapByPointer(&a, &b);
-    cout << a << '\n';
-    testRoundByLink(123.45);
-    testRoundByPointer(123.5);
-
-    int ** array;
-    array = (int**) malloc(3 * sizeof(int*));
-    for (int i = 0; i < 3; i++) {
-        array[i] = (int*) malloc(sizeof(int));
-    }
-
-    int cnt = 0;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            array[i][j] = ++cnt;
+    std::srand(unsigned(std::time(0)));
+    int success = 0;
+    for (int i = 0; i < sizeof(tests) / sizeof(std::function<bool()>); i++) {
+        try {
+            bool result = tests[i]();
+            if (result) {
+                success++;
+            } else {
+                cout << "Test with number " << i << " was failed!" << endl;
+            }
+        } catch (std::exception &e) {
+            cout << "Catched exception in test number " << i << " with reason " << e.what() << endl;
         }
     }
-    testMatrix(array);
-
-    ComplexNumber number = ComplexNumber(1.0, 0.0);
-    multiplyByLink(number, 123);
-    cout << number.x << " " << number.y;
+    cout << "Testing is finished. Amount of tests: " << sizeof(tests) / sizeof(std::function<bool()>)
+         << ". Success tests: " << success;
 }
